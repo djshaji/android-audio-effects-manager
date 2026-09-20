@@ -119,7 +119,6 @@ class AudioEffectsEngine(private val context: Context) {
         for ((_, sessionEffects) in sessions) {
             applyConfigToSession(sessionEffects, config)
         }
-        applySystemVolumeAndBalance(config)
     }
 
     private fun applyConfigToSession(effects: SessionEffects, config: AudioEffectsConfig) {
@@ -239,33 +238,6 @@ class AudioEffectsEngine(private val context: Context) {
                     Log.w("AudioEffectsEngine", "DynamicsProcessing parameter update failed: ${e.message}")
                 }
             }
-        }
-    }
-
-    private fun applySystemVolumeAndBalance(config: AudioEffectsConfig) {
-        try {
-            val maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-            val minVol = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC)
-            } else {
-                0
-            }
-            val targetSteps = (minVol + (maxVol - minVol) * config.fineVolumePercent).toInt().coerceIn(minVol, maxVol)
-            val currentSteps = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-
-            if (Math.abs(targetSteps - currentSteps) >= 1) {
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, targetSteps, 0)
-            }
-        } catch (_: Exception) {}
-    }
-
-    fun getSystemVolumePercent(): Float {
-        return try {
-            val max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-            val current = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-            if (max > 0) current.toFloat() / max.toFloat() else 0.5f
-        } catch (_: Exception) {
-            0.5f
         }
     }
 

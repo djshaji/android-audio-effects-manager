@@ -17,9 +17,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.RestartAlt
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -45,11 +46,8 @@ import com.example.ui.theme.TextTertiary
 
 @Composable
 fun MasterGainSection(
-    fineVolumePercent: Float,
     masterGainDb: Float,
     balance: Float,
-    onSetFineVolume: (Float) -> Unit,
-    onAdjustFineVolumeStep: (Float) -> Unit,
     onSetMasterGain: (Float) -> Unit,
     onSetBalance: (Float) -> Unit,
     modifier: Modifier = Modifier
@@ -62,7 +60,7 @@ fun MasterGainSection(
             .border(1.dp, StudioCardBorder, RoundedCornerShape(18.dp))
             .padding(16.dp)
     ) {
-        // 1. Fine Master Volume Control
+        // Master DSP Gain Header
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -70,117 +68,25 @@ fun MasterGainSection(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.VolumeUp,
-                    contentDescription = "Master Volume",
+                    imageVector = Icons.Default.Tune,
+                    contentDescription = "Master Gain",
                     tint = StudioCyan,
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Column {
                     Text(
-                        text = "FINE MASTER VOLUME",
+                        text = "MASTER DSP GAIN",
                         color = TextPrimary,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "High-precision 0.1% media stream volume",
+                        text = "Hardware dynamic input gain (-24 dB to +18 dB)",
                         color = TextSecondary,
                         fontSize = 11.sp
                     )
                 }
-            }
-
-            Text(
-                text = "${(fineVolumePercent * 100).toInt()}%",
-                color = if (fineVolumePercent > 0.85f) StudioAmber else StudioCyan,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Black
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // -1% Button
-            Box(
-                modifier = Modifier
-                    .size(38.dp)
-                    .clip(CircleShape)
-                    .background(StudioSurfaceVariant)
-                    .clickable { onAdjustFineVolumeStep(-0.01f) }
-                    .testTag("fine_volume_minus_button"),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Remove,
-                    contentDescription = "Decrease 1%",
-                    tint = TextPrimary,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // Slider
-            Slider(
-                value = fineVolumePercent,
-                onValueChange = onSetFineVolume,
-                valueRange = 0.0f..1.0f,
-                modifier = Modifier
-                    .weight(1f)
-                    .testTag("fine_volume_slider"),
-                colors = SliderDefaults.colors(
-                    thumbColor = StudioCyan,
-                    activeTrackColor = StudioCyan,
-                    inactiveTrackColor = StudioSurfaceVariant
-                )
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // +1% Button
-            Box(
-                modifier = Modifier
-                    .size(38.dp)
-                    .clip(CircleShape)
-                    .background(StudioSurfaceVariant)
-                    .clickable { onAdjustFineVolumeStep(0.01f) }
-                    .testTag("fine_volume_plus_button"),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Increase 1%",
-                    tint = TextPrimary,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(18.dp))
-
-        // 2. Master Gain (-24 dB to +18 dB)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "MASTER DSP GAIN",
-                    color = TextPrimary,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Pre-limiter hardware dynamic input gain",
-                    color = TextSecondary,
-                    fontSize = 11.sp
-                )
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -226,21 +132,65 @@ fun MasterGainSection(
             }
         }
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        Slider(
-            value = masterGainDb,
-            onValueChange = onSetMasterGain,
-            valueRange = -24.0f..18.0f,
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag("master_gain_slider"),
-            colors = SliderDefaults.colors(
-                thumbColor = if (masterGainDb > 6.0f) StudioAmber else StudioCyan,
-                activeTrackColor = if (masterGainDb > 6.0f) StudioAmber else StudioCyan,
-                inactiveTrackColor = StudioSurfaceVariant
+        // Precision step controls + Slider
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(StudioSurfaceVariant)
+                    .clickable { onSetMasterGain((masterGainDb - 0.5f).coerceIn(-24.0f, 18.0f)) }
+                    .testTag("gain_step_down_button"),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Remove,
+                    contentDescription = "-0.5 dB",
+                    tint = TextPrimary,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Slider(
+                value = masterGainDb,
+                onValueChange = onSetMasterGain,
+                valueRange = -24.0f..18.0f,
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("master_gain_slider"),
+                colors = SliderDefaults.colors(
+                    thumbColor = if (masterGainDb > 6.0f) StudioAmber else StudioCyan,
+                    activeTrackColor = if (masterGainDb > 6.0f) StudioAmber else StudioCyan,
+                    inactiveTrackColor = StudioSurfaceVariant
+                )
             )
-        )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(StudioSurfaceVariant)
+                    .clickable { onSetMasterGain((masterGainDb + 0.5f).coerceIn(-24.0f, 18.0f)) }
+                    .testTag("gain_step_up_button"),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "+0.5 dB",
+                    tint = TextPrimary,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -251,9 +201,9 @@ fun MasterGainSection(
             Text("+18 dB", color = TextTertiary, fontSize = 10.sp)
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
-        // 3. Stereo Balance
+        // Stereo Balance
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -301,6 +251,32 @@ fun MasterGainSection(
             Text("Left", color = TextTertiary, fontSize = 10.sp)
             Text("Center (0)", color = TextTertiary, fontSize = 10.sp, modifier = Modifier.clickable { onSetBalance(0.0f) })
             Text("Right", color = TextTertiary, fontSize = 10.sp)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Volume independence notice
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(StudioSurfaceVariant)
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = "System Volume Info",
+                tint = TextSecondary,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "System volume is managed directly with your device's volume rocker and is never modified by presets.",
+                color = TextSecondary,
+                fontSize = 11.sp,
+                lineHeight = 15.sp
+            )
         }
     }
 }

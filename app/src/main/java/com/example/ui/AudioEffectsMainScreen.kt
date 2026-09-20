@@ -124,11 +124,8 @@ fun AudioEffectsMainScreen(
             when (uiState.activeTab) {
                 AudioTab.MASTER -> {
                     MasterGainSection(
-                        fineVolumePercent = uiState.config.fineVolumePercent,
                         masterGainDb = uiState.config.masterGainDb,
                         balance = uiState.config.balance,
-                        onSetFineVolume = { viewModel.setFineVolume(it) },
-                        onAdjustFineVolumeStep = { viewModel.adjustFineVolumeStep(it) },
                         onSetMasterGain = { viewModel.setMasterGain(it) },
                         onSetBalance = { viewModel.setBalance(it) }
                     )

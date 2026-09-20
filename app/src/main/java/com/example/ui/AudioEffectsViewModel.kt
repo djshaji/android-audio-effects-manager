@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 enum class AudioTab(val title: String) {
-    MASTER("Master & Vol"),
+    MASTER("Master Gain"),
     EQ_BASS("EQ & Bass"),
     DYNAMICS("Dynamics & Limiter"),
     PRESETS("Scenarios")
@@ -113,9 +113,6 @@ class AudioEffectsViewModel(
     init {
         viewModelScope.launch {
             repository.ensureDefaultPresets()
-            // Read initial volume
-            val currentVol = fallbackEngine.getSystemVolumePercent()
-            _config.update { it.copy(fineVolumePercent = currentVol) }
             applyToEngines(_config.value)
             startForegroundService()
         }
@@ -152,18 +149,6 @@ class AudioEffectsViewModel(
         _config.update { it.copy(bypassAll = !it.bypassAll) }
         applyToEngines(_config.value)
         _userMessage.value = if (_config.value.bypassAll) "A/B Bypass Active (Raw Sound)" else "DSP Active"
-    }
-
-    // Master & Fine Volume
-    fun setFineVolume(percent: Float) {
-        val clamped = percent.coerceIn(0.0f, 1.0f)
-        _config.update { it.copy(fineVolumePercent = clamped) }
-        applyToEngines(_config.value)
-    }
-
-    fun adjustFineVolumeStep(delta: Float) {
-        val newVol = (_config.value.fineVolumePercent + delta).coerceIn(0.0f, 1.0f)
-        setFineVolume(newVol)
     }
 
     fun setMasterGain(gainDb: Float) {

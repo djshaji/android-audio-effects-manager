@@ -1,13 +1,13 @@
 package com.example.model
 
 /**
- * Complete DSP and system audio configuration.
+ * Complete DSP and audio effects configuration.
+ * System volume is left untouched and managed independently by the device volume keys.
  */
 data class AudioEffectsConfig(
-    // Master controls
+    // Master DSP controls
     val masterEnabled: Boolean = true,
     val masterGainDb: Float = 0.0f,            // -24.0 dB to +18.0 dB
-    val fineVolumePercent: Float = 0.75f,       // 0.0f to 1.0f (Fine Master Volume)
     val balance: Float = 0.0f,                 // -1.0f (Left) to +1.0f (Right)
     val bypassAll: Boolean = false,            // For A/B testing
 

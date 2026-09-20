@@ -17,7 +17,6 @@ data class PresetEntity(
 
     // DSP Parameters
     val masterGainDb: Float = 0.0f,
-    val fineVolumePercent: Float = 0.75f,
     val balance: Float = 0.0f,
 
     // Normalizer
@@ -62,7 +61,6 @@ data class PresetEntity(
         return AudioEffectsConfig(
             masterEnabled = masterEnabled,
             masterGainDb = masterGainDb,
-            fineVolumePercent = fineVolumePercent,
             balance = balance,
             normalizerEnabled = normalizerEnabled,
             normalizerGainMb = normalizerGainMb,
@@ -104,7 +102,6 @@ data class PresetEntity(
                 iconTag = iconTag,
                 isFactory = isFactory,
                 masterGainDb = config.masterGainDb,
-                fineVolumePercent = config.fineVolumePercent,
                 balance = config.balance,
                 normalizerEnabled = config.normalizerEnabled,
                 normalizerGainMb = config.normalizerGainMb,
