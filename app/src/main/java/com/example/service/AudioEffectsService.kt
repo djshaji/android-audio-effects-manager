@@ -25,9 +25,9 @@ class AudioEffectsService : Service() {
         const val CHANNEL_ID = "audio_effects_dsp_channel"
         const val NOTIFICATION_ID = 101
 
-        const val ACTION_TOGGLE_MASTER = "com.example.action.TOGGLE_MASTER"
-        const val ACTION_START_FOREGROUND = "com.example.action.START_FOREGROUND"
-        const val ACTION_STOP_FOREGROUND = "com.example.action.STOP_FOREGROUND"
+        const val ACTION_TOGGLE_MASTER = "org.acoustixaudio.sysfx.action.TOGGLE_MASTER"
+        const val ACTION_START_FOREGROUND = "org.acoustixaudio.sysfx.action.START_FOREGROUND"
+        const val ACTION_STOP_FOREGROUND = "org.acoustixaudio.sysfx.action.STOP_FOREGROUND"
 
         @Volatile
         var instance: AudioEffectsService? = null
