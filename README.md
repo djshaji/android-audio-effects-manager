@@ -1,6 +1,6 @@
 # Audio Effects Studio
 
-System-wide audio effects for Android. **Audio Effects Studio** applies a configurable DSP chain to the system output mix and active audio sessions, with a Compose-based control surface for tuning playback in real time.
+System-wide audio effects for Android. **Audio Effects Studio** applies a configurable DSP chain to the system output mix and active audio sessions, with a Compose-based control surface for tuning playback.
 
 > **Status:** Early-stage project. Audio-effect availability and behavior depend on the Android version, device audio stack, and manufacturer implementation.
 
@@ -158,4 +158,4 @@ Issues and pull requests are welcome. When reporting a device-specific problem, 
 
 ## License
 
-No license file is currently included in this repository. Until a license is added, all rights are reserved by the copyright holder.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for the full license text.
